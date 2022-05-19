@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  * @see filter_manager::apply_filter_chain()
  */
 class filter_hearthrating extends moodle_text_filter {
+
+    /**
+     *
+     */
+    const PLACEHOLDER_PATTERN = '/\{\{\bPROMPT\b:[a-zA-Z0-9_]+\}\}/';
+
     /**
      * This function looks for tags in Moodle text and
      * replaces them with prompt from Hearth Rating Prompts.
@@ -42,23 +48,14 @@ class filter_hearthrating extends moodle_text_filter {
      */
     function filter($text, array $options = array()) {
         global $PAGE;
-
         // Basic test to avoid work
-        if (!is_string($text)) {
-            // non string content can not be filtered anyway
+        if (!($matches = $this->get_matches($text))) {
             return $text;
         }
 
-        // Admin might need to change these at some point - eg to double curlies,
-        // therefore defined in {@link settings.php} with default values
         $def_config = get_config('filter_hearthrating');
         $starttag = $def_config->starttag;
         $endtag = $def_config->endtag;
-
-        // Do a quick check to see if we have a tag
-        if (strpos($text, $starttag) === false) {
-            return $text;
-        }
 
         list($context, $course, $cm) = get_context_info_array($this->context->id);
 
@@ -69,38 +66,47 @@ class filter_hearthrating extends moodle_text_filter {
         // There may be a tag in here somewhere so continue
         // Get the contents and positions in the text and call the
         // renderer to deal with them
-        $text = filter_hearthrating_insert_content($text, $starttag, $endtag, $cm);
-        return $text;
+        return $this->insert_content($text, $cm,$matches,$starttag,$endtag);
     }
-}
-/**
- *
- * function to replace question filter text with actual question
- *
- * @param string $str text to be processed
- * @param string $starttag start tag pattern to be searched for
- * @param string $endtag end tag for text to replace
- * @param int $courseid id of course text is in
- * @param renderer $renderer - filter renderer
- * @return a replacement text string
- */
-function filter_hearthrating_insert_content($str, $starttag, $endtag, $cm) {
-    global $OUTPUT;
-    $newstring = $str;
-    // While we have the start tag in the text
-    while (strpos($newstring, $starttag) !== false) {
-        $initpos = strpos($newstring, $starttag);
-        if ($initpos !== false) {
-            $pos = $initpos + strlen($starttag);  // get up to string
-            $endpos = strpos($newstring, $endtag);
-            $content = substr($newstring, $pos, $endpos - $pos); // extract content
-            // Clean the string
-            $promptidnumber = filter_var($content, FILTER_SANITIZE_STRING);
-            $prompt = new \mod_hearthrating\output\prompt($cm,$promptidnumber);
-            $data = $prompt->export_for_template($OUTPUT);
-            // Update the text to replace the filtered string
-            $output=$OUTPUT->render_from_template('mod_hearthrating/prompt', $data);
+
+    /**
+     * Looks for placeholders.
+     *
+     * @param string $text
+     * @return null|array
+     */
+    private function get_matches(string $text) {
+        if (!is_string($text) || empty($text) || strpos($text, '{{PROMPT:') === false ||
+            !preg_match_all(self::PLACEHOLDER_PATTERN, $text, $matches)) {
+            return null;
+        }
+        return $matches;
+    }
+
+    /**
+     * Insert hearth rating prompt upon a match
+     *
+     * @param $str
+     * @param $cm
+     * @param $matches
+     * @return void
+     */
+    function insert_content($text, $cm, $matches,$starttag,$endtag) {
+        global $OUTPUT;
+        $newstring=$text;
+        foreach ($matches as $match){
+            $initpos = strpos($newstring, $starttag);
+            if ($initpos !== false) {
+                $pos = $initpos + strlen($starttag);  // get up to string
+                $endpos = strpos($newstring, $endtag);
+                $content = substr($newstring, $pos, $endpos - $pos); // extract content
+                // Clean the string
+                $promptidnumber = filter_var($content, FILTER_SANITIZE_STRING);
+
+                $prompt = new \mod_hearthrating\output\prompt($cm, $promptidnumber);
+                $data = $prompt->export_for_template($OUTPUT);
+                return $OUTPUT->render_from_template('mod_hearthrating/prompt', $data);
+            }
         }
     }
-    return $output;
 }

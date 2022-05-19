@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Moodle plugin settings
+ * filter simplemodal admin settings and defaults
  *
  * @package    filter
- * @subpackage hearthrating
- * @author     Lukas Celinak <lukascelinak@gmail.com>
- * @copyright  2022 Lukas Celinak, Edumood, <lukascelinak@gmail.com>
+ * @subpackage simplemodal
+ * @copyright  2017 Richard Jones (@link https://richardnz.net/)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -37,7 +35,7 @@ if ($ADMIN->fulltree) {
     $heading = get_string('settings_heading', 'filter_hearthrating');
     $description = get_string('settings_desc', 'filter_hearthrating');
 
-    $settings->add(new admin_setting_heading('filterhearthratingsettings',
+    $settings->add(new admin_setting_heading('simplemodalsettings',
             $heading, $description));
 
 
