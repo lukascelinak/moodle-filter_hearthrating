@@ -27,11 +27,13 @@
 defined('MOODLE_INTERNAL') || die();
 /**
  * This filter looks for content tags in Moodle text and
- * replaces them with defined Hearth Rating Prompt.
+ * replaces them with defined Rate Prompts Prompt.
  * @see filter_manager::apply_filter_chain()
  */
-class filter_hearthrating extends moodle_text_filter {
+class filter_ratingprompts extends moodle_text_filter {
 
+    private $starttag="{{PROMPT:";
+    private $endtag="}}";
     /**
      *
      */
@@ -39,9 +41,9 @@ class filter_hearthrating extends moodle_text_filter {
 
     /**
      * This function looks for tags in Moodle text and
-     * replaces them with prompt from Hearth Rating Prompts.
+     * replaces them with prompt from Rate Prompts Prompts.
      * Tags have the format {{PROMPT:xxx}} where:
-     *          - xxx is is unique idnumber of Hearth Rating Prompt [shortname]
+     *          - xxx is is unique idnumber of Rate Prompts Prompt [shortname]
      * @param string $text to be processed by the text
      * @param array $options filter options
      * @return string text after processing
@@ -53,10 +55,6 @@ class filter_hearthrating extends moodle_text_filter {
             return $text;
         }
 
-        $def_config = get_config('filter_hearthrating');
-        $starttag = $def_config->starttag;
-        $endtag = $def_config->endtag;
-
         list($context, $course, $cm) = get_context_info_array($this->context->id);
 
         if (!$cm) {
@@ -66,7 +64,7 @@ class filter_hearthrating extends moodle_text_filter {
         // There may be a tag in here somewhere so continue
         // Get the contents and positions in the text and call the
         // renderer to deal with them
-        return $this->insert_content($text, $cm,$matches,$starttag,$endtag);
+        return $this->insert_content($text, $cm,$matches,$this->starttag,$this->endtag);
     }
 
     /**
@@ -76,7 +74,7 @@ class filter_hearthrating extends moodle_text_filter {
      * @return null|array
      */
     private function get_matches(string $text) {
-        if (!is_string($text) || empty($text) || strpos($text, '{{PROMPT:') === false ||
+        if (!is_string($text) || empty($text) || strpos($text, $this->starttag) === false ||
             !preg_match_all(self::PLACEHOLDER_PATTERN, $text, $matches)) {
             return null;
         }
@@ -84,7 +82,7 @@ class filter_hearthrating extends moodle_text_filter {
     }
 
     /**
-     * Insert hearth rating prompt upon a match
+     * Insert Rate Prompts prompt upon a match
      *
      * @param $str
      * @param $cm
@@ -103,9 +101,9 @@ class filter_hearthrating extends moodle_text_filter {
                 // Clean the string
                 $promptidnumber = filter_var($content, FILTER_SANITIZE_STRING);
 
-                $prompt = new \mod_hearthrating\output\prompt($cm, $promptidnumber);
+                $prompt = new \mod_ratingprompts\output\rateprompt($cm, $promptidnumber);
                 $data = $prompt->export_for_template($OUTPUT);
-                return $OUTPUT->render_from_template('mod_hearthrating/prompt', $data);
+                return $OUTPUT->render_from_template('mod_ratingprompts/rateprompt', $data);
             }
         }
     }

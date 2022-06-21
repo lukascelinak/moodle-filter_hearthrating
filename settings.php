@@ -32,20 +32,20 @@ if ($ADMIN->fulltree) {
     $END_TAG = '}}';
 
     // language strings
-    $heading = get_string('settings_heading', 'filter_hearthrating');
-    $description = get_string('settings_desc', 'filter_hearthrating');
+    $heading = get_string('settings_heading', 'filter_ratingprompts');
+    $description = get_string('settings_desc', 'filter_ratingprompts');
 
-    $settings->add(new admin_setting_heading('simplemodalsettings',
+    $settings->add(new admin_setting_heading('ratingpromptssetting',
             $heading, $description));
 
-
-    $settings->add(new admin_setting_configtext('filter_hearthrating/starttag',
-            get_string('settings_start_tag', 'filter_hearthrating'),
-            get_string('settings_start_tag_desc', 'filter_hearthrating'),
+/*
+    $settings->add(new admin_setting_configtext('filter_ratingprompts/starttag',
+            get_string('settings_start_tag', 'filter_ratingprompts'),
+            get_string('settings_start_tag_desc', 'filter_ratingprompts'),
             $START_TAG, PARAM_TEXT));
 
-    $settings->add(new admin_setting_configtext('filter_hearthrating/endtag',
-            get_string('settings_end_tag', 'filter_hearthrating'),
-            get_string('settings_end_tag_desc', 'filter_hearthrating'),
-            $END_TAG, PARAM_TEXT));
+    $settings->add(new admin_setting_configtext('filter_ratingprompts/endtag',
+            get_string('settings_end_tag', 'filter_ratingprompts'),
+            get_string('settings_end_tag_desc', 'filter_ratingprompts'),
+            $END_TAG, PARAM_TEXT));*/
 }

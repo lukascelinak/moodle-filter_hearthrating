@@ -1,8 +1,8 @@
-# Hearth Rating Filter #
+# Rate Prompts Filter #
 
-Hearth rating filter allow you to load hearth rating module prompt via any course module editor.
+Rate Prompts filter allow you to load Rate Prompts module prompt via any course module editor.
 
-Hearth rating filter will create new course module prompt, if wasn't created previously. 
+Rate Prompts filter will create new course module prompt, if wasn't created previously. 
 
 ## Installing via uploaded ZIP file ##
 

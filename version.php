@@ -27,11 +27,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /** @var core\plugininfo\ $plugin */
-$plugin->component = 'filter_hearthrating';
-$plugin->version   = 2022051900;
+$plugin->component = 'filter_ratingprompts';
+$plugin->version   = 2022061800;
 $plugin->requires  = 2017051500;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->dependencies = array(
-    'mod_hearthrating' => ANY_VERSION,
+    'mod_ratingprompts' => ANY_VERSION,
 );
 $plugin->release = 'v1.0'; // updated settings
